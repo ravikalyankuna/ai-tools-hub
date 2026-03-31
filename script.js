@@ -76,7 +76,7 @@ function toolDetail() {
     <div class="card p-4 shadow">
 
         <img src="${t.image}" 
-             style="height:80px;width:80px;object-fit:contain"
+             style="height:100px;width:100px;object-fit:contain"
              onerror="this.onerror=null;this.src='https://via.placeholder.com/80';">
 
         <h2 class="mt-3">${t.name}</h2>
