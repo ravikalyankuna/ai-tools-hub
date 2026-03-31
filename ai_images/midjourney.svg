@@ -1,0 +1,12 @@
+<svg version="1.2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1336" width="1600" height="1336">
+	<title>Midjourney_Emblem-svg</title>
+	<style>
+		.s0 { fill: none;stroke: #000000;stroke-linecap: round;stroke-linejoin: round;stroke-width: 41.2 } 
+	</style>
+	<g id="Layer">
+		<path id="waves" fill-rule="evenodd" class="s0" d="m21.6 1314.4c45.8 0 114.5-96.2 194.6-109.9 45.8 0 80.1 96.2 194.6 109.9 80.1 0 114.5-96.2 194.6-96.2 80.1 0 114.5 96.2 194.6 96.2 80.1 0 114.5-96.2 194.6-96.2 80.1 0 114.5 96.2 194.6 96.2 80.1 0 114.5-96.2 194.6-96.2 80.1 0 114.5 96.2 194.6 96.2"/>
+		<path id="hull" fill-rule="evenodd" class="s0" d="m178.2 1218.7l-52.4-100.3 1350.7-87c-106.2 96.6-242.7 174.9-380.7 239"/>
+		<path id="front_sail" fill-rule="evenodd" class="s0" d="m663.6 184.1c229.8 70.3 551.2 409.9 660.7 774.9-60-23.6-104.9-47.6-189.1-26.1-81.5-296.5-227.4-579.8-471.6-748.8z"/>
+		<path id="rear_sail" fill-rule="evenodd" class="s0" d="m236.1 21.8c294.4 125.9 698.3 476.5 772.5 943.4-339.6-137-598-63.9-778 47.2 274.5-349 151.4-745.9 5.5-990.6z"/>
+	</g>
+</svg>
