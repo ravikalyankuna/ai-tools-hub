@@ -75,7 +75,7 @@ function toolDetail() {
     el.innerHTML = `
     <div class="card p-4 shadow">
 
-        <img src="${t.image}" 
+        <img src="${t.image}"
              style="height:100px;width:100px;object-fit:contain"
              onerror="this.onerror=null;this.src='https://via.placeholder.com/80';">
 
