@@ -1,204 +1,474 @@
-function renderTools(list) {
-    const el = document.getElementById('tools');
-    if (!el) return;
+let activeSearch = "";
+let activeCategory = "";
+let currentPage = 1;
+const pageSize = 30;
 
-    el.innerHTML = '';
-
-    list.forEach(t => {
-        el.innerHTML += `
-        <div class="col-md-4">
-            <div class="card p-3 m-2 shadow">
-
-                <!-- Checkbox for compare -->
-                <input type="checkbox" class="compare-checkbox mb-2" value="${t.name}">
-
-                <img src="${t.image}"
-                     style="height:60px;width:60px;object-fit:contain"
-                     onerror="this.onerror=null;this.src='https://via.placeholder.com/60';">
-
-                <h5>${t.name}</h5>
-                <p>${t.description}</p>
-
-                <span class="tag">${t.category}</span>
-                <p>⭐ ${t.rating}</p>
-
-                <a href="tool.html?name=${t.name}" class="btn btn-dark btn-sm">Details</a>
-                <a href="${t.link}" target="_blank" class="btn btn-primary btn-sm mt-2">Visit</a>
-
-            </div>
-        </div>`;
-    });
+function escapeHtml(value) {
+    return String(value ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#39;");
 }
 
-function init() {
-    const catSet = [...new Set(tools.map(t => t.category))];
-    const sel = document.getElementById('categoryFilter');
-
-    if (sel) {
-        catSet.forEach(c => {
-            sel.innerHTML += `<option value="${c}">${c}</option>`;
-        });
-
-        sel.onchange = () => {
-            renderTools(sel.value ? tools.filter(t => t.category == sel.value) : tools);
-        };
-    }
-
-    const s = document.getElementById('search');
-    if (s) {
-        s.oninput = (e) => {
-            renderTools(
-                tools.filter(t =>
-                    t.name.toLowerCase().includes(e.target.value.toLowerCase())
-                )
-            );
-        };
-    }
-
-    renderTools(tools);
+function encodeToolName(name) {
+    return encodeURIComponent(name);
 }
 
-function toolDetail() {
-    const url = new URL(window.location.href);
-    const name = url.searchParams.get("name");
+function getGuideUrl(tool) {
+    return tool?.guideurl || "best-ai-tools-for-students.html";
+}
 
-    const t = tools.find(x => x.name === name);
+function getToolByName(name) {
+    return tools.find((tool) => tool.name === name);
+}
 
-    const el = document.getElementById('toolDetail');
-    if (!el) return;
-
-    if (!t) {
-        el.innerHTML = "<p>Tool not found</p>";
-        return;
+function getHostname(value) {
+    try {
+        return new URL(value).hostname.replace(/^www\./, "");
+    } catch {
+        return "";
     }
+}
 
-    el.innerHTML = `
-    <div class="card p-4 shadow">
+function getToolImage(tool) {
+    const host = getHostname(tool.link);
+    if (tool.image) return tool.image;
+    if (host) return `https://img.logo.dev/${host}`;
+    return "https://via.placeholder.com/96?text=AI";
+}
 
-        <img src="${t.image}"
-             style="height:100px;width:100px;object-fit:contain"
-             onerror="this.onerror=null;this.src='https://via.placeholder.com/80';">
+function getImageFallback(tool) {
+    const host = getHostname(tool.link);
+    if (host) {
+        return `https://www.google.com/s2/favicons?domain=${host}&sz=128`;
+    }
+    return "https://via.placeholder.com/96?text=AI";
+}
 
-        <h2 class="mt-3">${t.name}</h2>
+function createActionButtons(tool, options = {}) {
+    const { includeGuide = true, detailLabel = "Details", visitLabel = "Visit Tool" } = options;
+    const guideButton = includeGuide
+        ? `<a href="${escapeHtml(getGuideUrl(tool))}" class="btn btn-ghost rounded-pill tool-link-guide">Guide</a>`
+        : "";
 
-        <span class="badge bg-secondary mb-2">${t.category}</span>
-
-        <p><strong>Description:</strong><br>${t.description}</p>
-
-        <p><strong>Rating:</strong> ⭐ ${t.rating}</p>
-
-        <h5 class="mt-3">🧠 Use Cases:</h5>
-        <ul>
-            ${(t.useCases || []).map(u => `<li>${u}</li>`).join('')}
-        </ul>
-
-        <h5 class="mt-3">🚀 Features:</h5>
-        <ul>
-            ${(t.features || []).map(f => `<li>${f}</li>`).join('')}
-        </ul>
-
-        <h5 class="mt-3">📘 How to Use:</h5>
-        <ol>
-            ${(t.howToUse || []).map(step => `<li>${step}</li>`).join('')}
-        </ol>
-
-        <a href="${t.link}" target="_blank" class="btn btn-primary mt-3">
-            Visit Tool
-        </a>
-    </div>
+    return `
+        <div class="tool-actions">
+            <a href="tool.html?name=${encodeToolName(tool.name)}" class="btn btn-ghost rounded-pill">${detailLabel}</a>
+            <a href="${escapeHtml(tool.link)}" target="_blank" rel="noopener noreferrer" class="btn btn-accent rounded-pill">${visitLabel}</a>
+            ${guideButton}
+        </div>
     `;
 }
 
+function getFilteredTools() {
+    return tools.filter((tool) => {
+        const haystack = `${tool.name} ${tool.description} ${tool.category}`.toLowerCase();
+        const matchesSearch = !activeSearch || haystack.includes(activeSearch.toLowerCase());
+        const matchesCategory = !activeCategory || tool.category === activeCategory;
+        return matchesSearch && matchesCategory;
+    });
+}
+
+function clampCurrentPage(totalItems) {
+    const totalPages = Math.max(1, Math.ceil(totalItems / pageSize));
+    currentPage = Math.min(Math.max(1, currentPage), totalPages);
+    return totalPages;
+}
+
+function updateResultsSummary(totalCount, pageCount, totalPages) {
+    const summary = document.getElementById("resultsSummary");
+    if (!summary) return;
+
+    const categoryText = activeCategory ? ` in ${activeCategory}` : "";
+    summary.textContent = `Showing ${pageCount} of ${totalCount} tools${categoryText} • Page ${currentPage} of ${totalPages}`;
+}
+
+function applyCardInteractivity(root = document) {
+    const cards = root.querySelectorAll("[data-tool-name]");
+    cards.forEach((card) => {
+        card.addEventListener("mousemove", (event) => {
+            if (window.innerWidth < 768) return;
+            const rect = card.getBoundingClientRect();
+            const offsetX = event.clientX - rect.left;
+            const offsetY = event.clientY - rect.top;
+            const rotateY = ((offsetX / rect.width) - 0.5) * 10;
+            const rotateX = ((offsetY / rect.height) - 0.5) * -10;
+            card.style.transform = `perspective(1200px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-6px)`;
+        });
+
+        card.addEventListener("mouseleave", () => {
+            card.style.transform = "";
+        });
+    });
+}
+
+function renderPagination(totalItems) {
+    const el = document.getElementById("pagination");
+    if (!el) return;
+
+    const totalPages = clampCurrentPage(totalItems);
+    if (totalPages <= 1) {
+        el.innerHTML = "";
+        return;
+    }
+
+    const pages = [];
+    for (let page = 1; page <= totalPages; page += 1) {
+        if (totalPages <= 7 || page === 1 || page === totalPages || Math.abs(page - currentPage) <= 1) {
+            pages.push(page);
+        }
+    }
+
+    const compactPages = [];
+    let previous = 0;
+    pages.forEach((page) => {
+        if (previous && page - previous > 1) compactPages.push("ellipsis");
+        compactPages.push(page);
+        previous = page;
+    });
+
+    el.innerHTML = `
+        <button class="pagination-btn" data-page="${currentPage - 1}" ${currentPage === 1 ? "disabled" : ""}>Prev</button>
+        ${compactPages.map((page) => {
+            if (page === "ellipsis") {
+                return `<button class="pagination-btn" disabled>…</button>`;
+            }
+            return `<button class="pagination-btn ${page === currentPage ? "is-active" : ""}" data-page="${page}">${page}</button>`;
+        }).join("")}
+        <button class="pagination-btn" data-page="${currentPage + 1}" ${currentPage === totalPages ? "disabled" : ""}>Next</button>
+    `;
+
+    el.querySelectorAll("[data-page]").forEach((button) => {
+        button.addEventListener("click", () => {
+            currentPage = Number(button.dataset.page);
+            syncFilters(false);
+            const explorer = document.getElementById("toolExplorer");
+            if (explorer) explorer.scrollIntoView({ behavior: "smooth", block: "start" });
+        });
+    });
+}
+
+function renderTools(list) {
+    const el = document.getElementById("tools");
+    if (!el) return;
+
+    const totalPages = clampCurrentPage(list.length);
+    const startIndex = (currentPage - 1) * pageSize;
+    const pagedList = list.slice(startIndex, startIndex + pageSize);
+
+    updateResultsSummary(list.length, pagedList.length, totalPages);
+    const counter = document.getElementById("toolCount");
+    if (counter) {
+        counter.textContent = `${tools.length}+`;
+    }
+
+    if (!pagedList.length) {
+        el.innerHTML = `<div class="col-12"><div class="empty-state">No tools matched your search. Try another keyword or reset the filters.</div></div>`;
+        renderPagination(0);
+        return;
+    }
+
+    el.innerHTML = pagedList.map((tool) => `
+        <div class="col-md-6 col-xl-4">
+            <article class="tool-card d-flex flex-column" data-tool-name="${escapeHtml(tool.name)}">
+                <div class="tool-card-top">
+                    <label class="compare-toggle">
+                        <input type="checkbox" class="compare-checkbox" value="${escapeHtml(tool.name)}">
+                        Compare
+                    </label>
+                    <img
+                        class="tool-logo"
+                        src="${escapeHtml(getToolImage(tool))}"
+                        data-fallback="${escapeHtml(getImageFallback(tool))}"
+                        alt="${escapeHtml(tool.name)} logo"
+                        onerror="if(this.dataset.fallback && this.src !== this.dataset.fallback){this.src=this.dataset.fallback;}else{this.onerror=null;this.src='https://via.placeholder.com/68?text=AI';}">
+                </div>
+
+                <div class="tool-meta">
+                    <span class="tool-tag">${escapeHtml(tool.category)}</span>
+                    <span class="rating-pill">★ ${escapeHtml(tool.rating)}</span>
+                </div>
+
+                <h3 class="tool-card-title">${escapeHtml(tool.name)}</h3>
+                <p class="tool-card-copy">${escapeHtml(tool.description)}</p>
+
+                ${createActionButtons(tool)}
+            </article>
+        </div>
+    `).join("");
+
+    renderPagination(list.length);
+    applyCardInteractivity(el);
+}
+
+function syncFilters(resetPage = true) {
+    if (resetPage) currentPage = 1;
+    renderTools(getFilteredTools());
+}
+
+function init() {
+    const toolRoot = document.getElementById("tools");
+    if (!toolRoot) return;
+
+    const categories = [...new Set(tools.map((tool) => tool.category))].sort();
+    const categorySelect = document.getElementById("categoryFilter");
+    const searchInput = document.getElementById("search");
+    const clearButton = document.getElementById("clearFilters");
+
+    if (categorySelect) {
+        categorySelect.innerHTML = `<option value="">All Categories</option>${categories.map((category) => `
+            <option value="${escapeHtml(category)}">${escapeHtml(category)}</option>
+        `).join("")}`;
+
+        categorySelect.addEventListener("change", (event) => {
+            activeCategory = event.target.value;
+            syncFilters();
+        });
+    }
+
+    if (searchInput) {
+        searchInput.addEventListener("input", (event) => {
+            activeSearch = event.target.value.trim();
+            syncFilters();
+        });
+    }
+
+    if (clearButton) {
+        clearButton.addEventListener("click", () => {
+            activeSearch = "";
+            activeCategory = "";
+            if (searchInput) searchInput.value = "";
+            if (categorySelect) categorySelect.value = "";
+            syncFilters();
+        });
+    }
+
+    syncFilters();
+}
+
+function toolDetail() {
+    const el = document.getElementById("toolDetail");
+    if (!el) return;
+
+    const url = new URL(window.location.href);
+    const name = url.searchParams.get("name");
+    const tool = getToolByName(name);
+
+    if (!tool) {
+        el.innerHTML = `<div class="detail-card"><p>Tool not found.</p></div>`;
+        return;
+    }
+
+    document.title = `${tool.name} | AI Tools Hub`;
+
+    el.innerHTML = `
+        <article class="detail-card" data-tool-name="${escapeHtml(tool.name)}">
+            <div class="detail-top">
+                <img
+                    class="detail-logo"
+                    src="${escapeHtml(getToolImage(tool))}"
+                    data-fallback="${escapeHtml(getImageFallback(tool))}"
+                    alt="${escapeHtml(tool.name)} logo"
+                    onerror="if(this.dataset.fallback && this.src !== this.dataset.fallback){this.src=this.dataset.fallback;}else{this.onerror=null;this.src='https://via.placeholder.com/96?text=AI';}">
+                <div>
+                    <span class="tool-tag">${escapeHtml(tool.category)}</span>
+                    <h2 class="mt-3">${escapeHtml(tool.name)}</h2>
+                    <p>${escapeHtml(tool.description)}</p>
+                    <div class="hero-actions">
+                        <a href="${escapeHtml(tool.link)}" target="_blank" rel="noopener noreferrer" class="btn btn-accent rounded-pill">Visit Tool</a>
+                        <a href="${escapeHtml(getGuideUrl(tool))}" class="btn btn-ghost rounded-pill">Open Guide</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="detail-grid">
+                <section class="detail-block">
+                    <h3>Rating</h3>
+                    <p class="mb-0">★ ${escapeHtml(tool.rating)}</p>
+                </section>
+                <section class="detail-block">
+                    <h3>Use Cases</h3>
+                    <ul>${(tool.useCases || []).map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul>
+                </section>
+                <section class="detail-block">
+                    <h3>Features</h3>
+                    <ul>${(tool.features || []).map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul>
+                </section>
+            </div>
+
+            <section class="detail-block mt-3">
+                <h3>How to Use</h3>
+                <ol>${(tool.howToUse || []).map((step) => `<li>${escapeHtml(step)}</li>`).join("")}</ol>
+            </section>
+        </article>
+    `;
+
+    applyCardInteractivity(el);
+}
+
 function compareSelected() {
-    const selectedNames = Array.from(document.querySelectorAll('.compare-checkbox:checked'))
-        .map(cb => cb.value);
+    const selectedNames = Array.from(document.querySelectorAll(".compare-checkbox:checked"))
+        .map((checkbox) => checkbox.value);
 
     if (selectedNames.length < 2) {
-        alert("Select at least 2 tools to compare");
+        alert("Select at least 2 tools to compare.");
         return;
     }
 
-    // Get full tool objects
-    const selectedTools = tools.filter(t => selectedNames.includes(t.name));
-
-    // 🔥 ADD THIS BLOCK HERE (SAME CATEGORY CHECK)
-    const categories = selectedTools.map(t => t.category);
-    const uniqueCategories = [...new Set(categories)];
+    const selectedTools = tools.filter((tool) => selectedNames.includes(tool.name));
+    const uniqueCategories = [...new Set(selectedTools.map((tool) => tool.category))];
 
     if (uniqueCategories.length > 1) {
-        alert("Please select tools from the SAME category");
+        alert("Please select tools from the same category.");
         return;
     }
 
-    // Save to localStorage
     localStorage.setItem("compareTools", JSON.stringify(selectedNames));
-
-    // Redirect
     window.location.href = "compare.html";
 }
 
 function compare() {
-    const selectedNames = JSON.parse(localStorage.getItem("compareTools")) || [];
-    const selectedTools = tools.filter(t => selectedNames.includes(t.name));
-
-    const el = document.getElementById('compareTable');
+    const el = document.getElementById("compareTable");
     if (!el) return;
 
-    if (selectedTools.length === 0) {
-        el.innerHTML = "<tr><td>No tools selected</td></tr>";
+    const selectedNames = JSON.parse(localStorage.getItem("compareTools")) || [];
+    const selectedTools = tools.filter((tool) => selectedNames.includes(tool.name));
+
+    if (!selectedTools.length) {
+        el.innerHTML = `<tr><td>No tools selected yet. Go back to the explorer and add at least two tools.</td></tr>`;
         return;
     }
 
     el.innerHTML = `
-    <tr>
-        <th>Feature</th>
-        ${selectedTools.map(t => `<th>${t.name}</th>`).join('')}
-    </tr>
-
-    <tr>
-        <td>Category</td>
-        ${selectedTools.map(t => `<td>${t.category}</td>`).join('')}
-    </tr>
-
-    <tr>
-        <td>Rating</td>
-        ${selectedTools.map(t => `<td>⭐ ${t.rating}</td>`).join('')}
-    </tr>
-
-    <tr>
-        <td>Use Cases</td>
-        ${selectedTools.map(t => `
-            <td>
-                <ul>
-                    ${(t.useCases || []).map(u => `<li>${u}</li>`).join('')}
-                </ul>
-            </td>
-        `).join('')}
-    </tr>
-
-    <tr>
-        <td>Features</td>
-        ${selectedTools.map(t => `
-            <td>
-                <ul>
-                    ${(t.features || []).map(f => `<li>${f}</li>`).join('')}
-                </ul>
-            </td>
-        `).join('')}
-    </tr>
-
-    <tr>
-        <td>Visit</td>
-        ${selectedTools.map(t => `
-            <td>
-                <a href="${t.link}" target="_blank" class="btn btn-sm btn-primary">Open</a>
-            </td>
-        `).join('')}
-    </tr>
+        <tr>
+            <th>Feature</th>
+            ${selectedTools.map((tool) => `<th>${escapeHtml(tool.name)}</th>`).join("")}
+        </tr>
+        <tr>
+            <td>Category</td>
+            ${selectedTools.map((tool) => `<td>${escapeHtml(tool.category)}</td>`).join("")}
+        </tr>
+        <tr>
+            <td>Rating</td>
+            ${selectedTools.map((tool) => `<td>★ ${escapeHtml(tool.rating)}</td>`).join("")}
+        </tr>
+        <tr>
+            <td>Guide</td>
+            ${selectedTools.map((tool) => `<td><a href="${escapeHtml(getGuideUrl(tool))}" class="btn btn-ghost btn-sm rounded-pill">Guide</a></td>`).join("")}
+        </tr>
+        <tr>
+            <td>Use Cases</td>
+            ${selectedTools.map((tool) => `<td><ul>${(tool.useCases || []).map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul></td>`).join("")}
+        </tr>
+        <tr>
+            <td>Features</td>
+            ${selectedTools.map((tool) => `<td><ul>${(tool.features || []).map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul></td>`).join("")}
+        </tr>
+        <tr>
+            <td>Action</td>
+            ${selectedTools.map((tool) => `
+                <td>
+                    <a href="${escapeHtml(tool.link)}" target="_blank" rel="noopener noreferrer" class="btn btn-accent btn-sm rounded-pill">Open Tool</a>
+                </td>
+            `).join("")}
+        </tr>
     `;
 }
 
-/* INIT ALL */
+function renderGuideCards(list) {
+    return list.map((tool) => `
+        <div class="col-md-6 col-xl-4">
+            <article class="guide-card" data-tool-name="${escapeHtml(tool.name)}">
+                <span class="guide-tag">${escapeHtml(tool.category)}</span>
+                <h3 class="mt-3">${escapeHtml(tool.name)}</h3>
+                <p>${escapeHtml(tool.description)}</p>
+                ${createActionButtons(tool, { detailLabel: "Details", visitLabel: "Try Now" })}
+            </article>
+        </div>
+    `).join("");
+}
+
+function studentGuide() {
+    const el = document.getElementById("studentGuideTools");
+    if (!el) return;
+
+    const studentKeywords = ["student", "writing", "productivity", "education", "research", "study", "note", "presentation"];
+    const curatedTools = tools
+        .filter((tool) => {
+            const haystack = `${tool.name} ${tool.description} ${tool.category}`.toLowerCase();
+            return studentKeywords.some((keyword) => haystack.includes(keyword));
+        })
+        .slice(0, 9);
+
+    const fallback = tools.slice(0, 9);
+    const guideList = curatedTools.length ? curatedTools : fallback;
+
+    el.innerHTML = renderGuideCards(guideList);
+    applyCardInteractivity(el);
+}
+
+function renderFooter() {
+    const footerRoot = document.getElementById("siteFooter");
+    if (!footerRoot) return;
+
+    const categories = [...new Set(tools.map((tool) => tool.category))];
+    const compareCount = (JSON.parse(localStorage.getItem("compareTools")) || []).length;
+    const topRated = tools.filter((tool) => Number(tool.rating) >= 4.8).length;
+
+    footerRoot.innerHTML = `
+        <footer class="site-footer">
+            <div class="container">
+                <div class="site-footer-card">
+                    <div class="footer-grid">
+                        <section>
+                            <span class="eyebrow">AI Tools Hub</span>
+                            <h3 class="mt-3">Built to help users discover faster, compare better, and launch with confidence.</h3>
+                            <p>This directory is now guide-aware, data-driven, and interactive. Every tool can route users into a guided path instead of forcing them to guess.</p>
+                            <div class="footer-meta">
+                                <div class="footer-stat">
+                                    <strong>${tools.length}</strong>
+                                    <span>Live tools indexed</span>
+                                </div>
+                                <div class="footer-stat">
+                                    <strong>${categories.length}</strong>
+                                    <span>Active categories</span>
+                                </div>
+                                <div class="footer-stat">
+                                    <strong>${topRated}</strong>
+                                    <span>Rated 4.8+</span>
+                                </div>
+                            </div>
+                        </section>
+                        <section>
+                            <h4>Quick Paths</h4>
+                            <ul class="footer-links">
+                                <li><a href="index.html#toolExplorer">Explore the full directory</a></li>
+                                <li><a href="best-ai-tools-for-students.html">Open the student-friendly guide</a></li>
+                                <li><a href="compare.html">Review compare view</a></li>
+                                <li>Saved compare shortlist: ${compareCount}</li>
+                            </ul>
+                        </section>
+                        <section>
+                            <h4>Why This Works</h4>
+                            <ul class="footer-highlights">
+                                <li>Interactive filters reduce search friction.</li>
+                                <li>Guide links create a beginner-friendly decision path.</li>
+                                <li>Pagination keeps large collections usable.</li>
+                                <li>Structured tool data keeps expansion simple.</li>
+                            </ul>
+                        </section>
+                    </div>
+                    <p class="footer-note">Focused on practical discovery across writing, coding, video, marketing, research, productivity, support, design, and automation tools.</p>
+                </div>
+            </div>
+        </footer>
+    `;
+}
+
 init();
 toolDetail();
 compare();
+studentGuide();
+renderFooter();
