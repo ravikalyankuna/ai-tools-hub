@@ -1,74 +1,189 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Tools Hub</title>
+    <title>AI Tools Hub | Discover, Compare, Launch</title>
+    <meta name="description" content="Explore, compare, and launch AI tools with a faster, cleaner, and more interactive directory experience.">
 
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Manrope:wght@400;500;700;800&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-
-    <!-- Google Font -->
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
-
-    <!-- Custom CSS -->
     <link rel="stylesheet" href="css/style.css">
 
-    <!-- AdSense -->
     <script async
             src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-19878XXXXXXXXX"
             crossorigin="anonymous"></script>
 </head>
-
 <body>
-
-<!-- PARTICLES -->
 <canvas id="particles"></canvas>
 
-<!-- NAVBAR -->
-<nav class="navbar navbar-dark p-3">
-    <a class="navbar-brand fw-bold" href="#">AI Tools Hub</a>
-</nav>
+<div class="page-shell">
+    <nav class="navbar navbar-expand-lg site-nav">
+        <div class="container">
+            <a class="navbar-brand brand-mark" href="index.html">AI Tools Hub</a>
+            <button class="navbar-toggler nav-toggle" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="mainNav">
+                <div class="navbar-nav ms-auto align-items-lg-center gap-lg-3">
+                    <a class="nav-link" href="#toolExplorer">Explore</a>
+                    <a class="nav-link" href="compare.html">Compare</a>
+                    <a class="nav-link" href="best-ai-tools-for-students.html">Guide</a>
+                    <a class="btn btn-outline-light rounded-pill nav-cta" href="best-ai-tools-for-students.html">Open Guide</a>
+                </div>
+            </div>
+        </div>
+    </nav>
 
-<!-- HERO -->
-<div class="hero">
-    <h1>Discover the Best AI Tools</h1>
-    <p class="text-secondary">Find, compare and explore 1500+ AI tools instantly</p>
+    <main>
+        <section class="hero-section">
+            <div class="container">
+                <div class="row align-items-center g-5">
+                    <div class="col-lg-7">
+                        <span class="eyebrow">Smarter discovery for modern teams and creators</span>
+                        <h1 class="hero-title">Find AI tools people actually want to use.</h1>
+                        <p class="hero-copy">
+                            Search faster, compare categories side by side, and follow a curated guide to pick the right tool without wasting time.
+                        </p>
 
-    <input id="search"
-           class="form-control form-control-lg text-white bg-dark"
-           placeholder="Search AI tools...">
+                        <div class="hero-actions">
+                            <a class="btn btn-accent btn-lg rounded-pill" href="#toolExplorer">Explore Tools</a>
+                            <a class="btn btn-ghost btn-lg rounded-pill" href="best-ai-tools-for-students.html">View Guide</a>
+                        </div>
+
+                        <div class="hero-stats">
+                            <div class="stat-card">
+                                <strong id="toolCount">1500+</strong>
+                                <span>Tools indexed</span>
+                            </div>
+                            <div class="stat-card">
+                                <strong>Fast compare</strong>
+                                <span>Shortlist by category</span>
+                            </div>
+                            <div class="stat-card">
+                                <strong>Guide-first UX</strong>
+                                <span>Built for beginners and pros</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-5">
+                        <aside class="hero-panel">
+                            <p class="panel-label">Quick start</p>
+                            <h2>Need help choosing?</h2>
+                            <p>Use the guide for a curated path, or jump straight into the full directory and filter by use case.</p>
+                            <div class="panel-actions">
+                                <a class="btn btn-light rounded-pill" href="best-ai-tools-for-students.html">Read the Guide</a>
+                                <a class="btn btn-outline-light rounded-pill" href="compare.html">Open Compare</a>
+                            </div>
+                            <div class="mini-list">
+                                <span>Search by name</span>
+                                <span>Filter by category</span>
+                                <span>Open tool details</span>
+                            </div>
+                        </aside>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="feature-strip">
+            <div class="container">
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <div class="feature-card">
+                            <h3>Interactive discovery</h3>
+                            <p>Live search, category filtering, and a cleaner scanning experience.</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="feature-card">
+                            <h3>Comparison workflow</h3>
+                            <p>Select tools from one category and compare them in one place.</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="feature-card">
+                            <h3>Guide-driven onboarding</h3>
+                            <p>A dedicated guide page helps new users start with confidence.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="explorer-section" id="toolExplorer">
+            <div class="container">
+                <div class="section-heading">
+                    <div>
+                        <span class="eyebrow">Tool explorer</span>
+                        <h2>Browse the full collection</h2>
+                        <p>Use search and category filters together to narrow the list instantly.</p>
+                    </div>
+                    <a class="text-link" href="best-ai-tools-for-students.html">Need a guided path?</a>
+                </div>
+
+                <div class="control-panel">
+                    <div class="row g-3 align-items-end">
+                        <div class="col-lg-6">
+                            <label for="search" class="form-label control-label">Search</label>
+                            <input id="search"
+                                   class="form-control form-control-lg site-input"
+                                   placeholder="Search AI tools, creators, writing, coding...">
+                        </div>
+                        <div class="col-lg-4">
+                            <label for="categoryFilter" class="form-label control-label">Category</label>
+                            <select id="categoryFilter" class="form-select form-select-lg site-input">
+                                <option value="">All Categories</option>
+                            </select>
+                        </div>
+                        <div class="col-lg-2">
+                            <button id="clearFilters" class="btn btn-outline-light w-100 btn-lg rounded-pill">Reset</button>
+                        </div>
+                    </div>
+
+                    <div class="toolbar">
+                        <p id="resultsSummary" class="results-summary">Loading tools...</p>
+                        <button onclick="compareSelected()" class="btn btn-accent compare-btn rounded-pill">
+                            Compare Selected Tools
+                        </button>
+                    </div>
+                </div>
+
+                <div id="tools" class="row g-4"></div>
+                <div id="pagination" class="pagination-wrap"></div>
+
+                <div class="guide-banner">
+                    <div>
+                        <span class="eyebrow">Bonus</span>
+                        <h3>Start with the student-friendly guide</h3>
+                        <p>Good for new users who want a smaller, curated list before exploring the full directory.</p>
+                    </div>
+                    <a class="btn btn-light rounded-pill" href="best-ai-tools-for-students.html">Open Guide</a>
+                </div>
+
+                <div class="mt-3 mb-0 text-center">
+                    <ins class="adsbygoogle"
+                         style="display:block"
+                         data-ad-client="ca-pub-19878XXXXXXXXX"
+                         data-ad-slot="YOUR_SLOT_ID"
+                         data-ad-format="auto"></ins>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <div id="siteFooter"></div>
 </div>
 
-<div class="container">
-
-    <select id="categoryFilter" class="form-select text-white bg-dark mb-4">
-        <option value="">All Categories</option>
-    </select>
-
-    <button onclick="compareSelected()" class="btn btn-primary compare-btn">
-        Compare Selected Tools
-    </button>
-
-    <div id="tools" class="row"></div>
-
-    <!-- ADSENSE -->
-    <div class="my-5 text-center">
-        <ins class="adsbygoogle"
-             style="display:block"
-             data-ad-client="ca-pub-19878XXXXXXXXX"
-             data-ad-slot="YOUR_SLOT_ID"
-             data-ad-format="auto"></ins>
-    </div>
-
-</div>
-
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script src="data.js"></script>
 <script src="script.js"></script>
 <script src="add.js"></script>
-
 <script>
     (adsbygoogle = window.adsbygoogle || []).push({});
 </script>
-
 </body>
 </html>
