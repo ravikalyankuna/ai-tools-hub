@@ -200,11 +200,14 @@ a {
 .hero-panel,
 .feature-card,
 .control-panel,
+.editorial-panel,
 .guide-banner,
 .detail-card,
 .compare-card,
 .guide-card,
-.compare-table-wrap {
+.compare-table-wrap,
+.policy-card,
+.contact-card {
     background: var(--panel);
     border: 1px solid var(--stroke);
     border-radius: 28px;
@@ -458,10 +461,16 @@ select.site-input option {
 
 .guide-banner,
 .compare-card,
-.guide-card {
+.guide-card,
+.policy-card {
     padding: 2rem;
     position: relative;
     overflow: hidden;
+}
+
+.editorial-panel {
+    margin-top: 1.5rem;
+    padding: 1.6rem;
 }
 
 .guide-banner {
@@ -573,6 +582,43 @@ select.site-input option {
     margin-top: 1.2rem;
 }
 
+.policy-card h2,
+.editorial-panel h3,
+.contact-card h2 {
+    font-family: "Space Grotesk", sans-serif;
+    margin-top: 1.2rem;
+    margin-bottom: 0.75rem;
+}
+
+.policy-card p,
+.editorial-panel p,
+.contact-card p {
+    color: var(--muted);
+    line-height: 1.7;
+}
+
+.policy-callout,
+.compliance-note {
+    margin-top: 1rem;
+    color: #d8e1ec;
+    font-size: 0.95rem;
+}
+
+.contact-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+    margin: 1.5rem 0;
+}
+
+.contact-card {
+    padding: 1.25rem;
+}
+
+.contact-form {
+    margin-top: 1.2rem;
+}
+
 .site-footer {
     padding: 0 0 2rem;
 }
@@ -649,7 +695,8 @@ select.site-input option {
     .hero-stats,
     .detail-grid,
     .footer-grid,
-    .footer-meta {
+    .footer-meta,
+    .contact-grid {
         grid-template-columns: 1fr;
     }
 
