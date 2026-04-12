@@ -82,7 +82,7 @@ function updateResultsSummary(totalCount, pageCount, totalPages) {
     if (!summary) return;
 
     const categoryText = activeCategory ? ` in ${activeCategory}` : "";
-    summary.textContent = `Showing ${pageCount} of ${totalCount} tools${categoryText} • Page ${currentPage} of ${totalPages}`;
+    summary.textContent = `Showing ${pageCount} of ${totalCount} tools${categoryText} | Page ${currentPage} of ${totalPages}`;
 }
 
 function applyCardInteractivity(root = document) {
@@ -133,7 +133,7 @@ function renderPagination(totalItems) {
         <button class="pagination-btn" data-page="${currentPage - 1}" ${currentPage === 1 ? "disabled" : ""}>Prev</button>
         ${compactPages.map((page) => {
             if (page === "ellipsis") {
-                return `<button class="pagination-btn" disabled>…</button>`;
+                return `<button class="pagination-btn" disabled>...</button>`;
             }
             return `<button class="pagination-btn ${page === currentPage ? "is-active" : ""}" data-page="${page}">${page}</button>`;
         }).join("")}
@@ -188,7 +188,7 @@ function renderTools(list) {
 
                 <div class="tool-meta">
                     <span class="tool-tag">${escapeHtml(tool.category)}</span>
-                    <span class="rating-pill">★ ${escapeHtml(tool.rating)}</span>
+                    <span class="rating-pill">${escapeHtml(tool.rating)}/5</span>
                 </div>
 
                 <h3 class="tool-card-title">${escapeHtml(tool.name)}</h3>
@@ -286,7 +286,7 @@ function toolDetail() {
             <div class="detail-grid">
                 <section class="detail-block">
                     <h3>Rating</h3>
-                    <p class="mb-0">★ ${escapeHtml(tool.rating)}</p>
+                    <p class="mb-0">${escapeHtml(tool.rating)}/5</p>
                 </section>
                 <section class="detail-block">
                     <h3>Use Cases</h3>
@@ -352,7 +352,7 @@ function compare() {
         </tr>
         <tr>
             <td>Rating</td>
-            ${selectedTools.map((tool) => `<td>★ ${escapeHtml(tool.rating)}</td>`).join("")}
+            ${selectedTools.map((tool) => `<td>${escapeHtml(tool.rating)}/5</td>`).join("")}
         </tr>
         <tr>
             <td>Guide</td>
@@ -447,6 +447,10 @@ function renderFooter() {
                                 <li><a href="index.html#toolExplorer">Explore the full directory</a></li>
                                 <li><a href="best-ai-tools-for-students.html">Open the student-friendly guide</a></li>
                                 <li><a href="compare.html">Review compare view</a></li>
+                                <li><a href="about.html">About this site</a></li>
+                                <li><a href="contact.html">Contact the publisher</a></li>
+                                <li><a href="privacy-policy.html">Privacy Policy</a></li>
+                                <li><a href="terms.html">Terms of Use</a></li>
                                 <li>Saved compare shortlist: ${compareCount}</li>
                             </ul>
                         </section>
@@ -457,10 +461,11 @@ function renderFooter() {
                                 <li>Guide links create a beginner-friendly decision path.</li>
                                 <li>Pagination keeps large collections usable.</li>
                                 <li>Structured tool data keeps expansion simple.</li>
+                                <li>Visible trust pages improve transparency.</li>
                             </ul>
                         </section>
                     </div>
-                    <p class="footer-note">Focused on practical discovery across writing, coding, video, marketing, research, productivity, support, design, and automation tools.</p>
+                    <p class="footer-note">Focused on practical discovery across writing, coding, video, marketing, research, productivity, support, design, and automation tools. Ratings are editorial summaries and external links point to official third-party websites.</p>
                 </div>
             </div>
         </footer>
