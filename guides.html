@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Compare AI Tools | AI Tools Hub</title>
+    <title>AI Tool Category Guides | AI Tools Hub</title>
+    <meta name="description" content="Browse category guides for writing, coding, design, research, marketing, support, productivity, and more.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Manrope:wght@400;500;700;800&display=swap" rel="stylesheet">
@@ -17,7 +18,7 @@
             <a class="navbar-brand brand-mark" href="index.html">AI Tools Hub</a>
             <div class="navbar-nav ms-auto flex-row gap-3">
                 <a class="nav-link" href="index.html#toolExplorer">Explore</a>
-                <a class="nav-link" href="best-ai-tools-for-students.html">Guide</a>
+                <a class="nav-link" href="compare.html">Compare</a>
                 <a class="nav-link" href="free-tools.html">Free Tools</a>
                 <a class="nav-link" href="premium-tools.html">Premium Tools</a>
                 <a class="nav-link" href="methodology.html">Methodology</a>
@@ -25,36 +26,32 @@
         </div>
     </nav>
 
-    <section class="page-hero compare-section">
+    <section class="page-hero guide-section">
         <div class="container">
             <div class="compare-card">
-                <span class="eyebrow">Side-by-side review</span>
-                <h1>Compare shortlisted tools</h1>
-                <p>Select tools from the same category on the homepage, then review their use cases, features, and direct links here.</p>
-                <div class="hero-actions">
-                    <a href="index.html#toolExplorer" class="btn btn-accent rounded-pill">Choose Tools</a>
-                    <a href="best-ai-tools-for-students.html" class="btn btn-ghost rounded-pill">Open Guide</a>
-                </div>
+                <span class="eyebrow">Category Guides</span>
+                <h1>Choose by workflow, not hype</h1>
+                <p>These guides explain what each AI category is good at, what to compare inside it, and how to avoid common buying mistakes. Start with the workflow you actually need to improve.</p>
             </div>
 
             <div class="editorial-panel mt-4">
                 <div class="row g-4">
-                    <div class="col-lg-6">
-                        <h3>Better comparisons</h3>
-                        <p>Compare tools within the same category so feature differences are meaningful and easier to evaluate.</p>
+                    <div class="col-lg-4">
+                        <h3>What these guides do</h3>
+                        <p>They compress the early research stage. Instead of opening twenty vendor pages immediately, you can learn how the category works and what details actually matter.</p>
                     </div>
-                    <div class="col-lg-6">
-                        <h3>Review before clicking out</h3>
-                        <p>Use the feature, use case, and guide rows here before visiting the official websites of the selected tools.</p>
+                    <div class="col-lg-4">
+                        <h3>Who should use them</h3>
+                        <p>Teams evaluating AI tools for real work, freelancers choosing tools for client delivery, and individuals who want to understand tradeoffs before committing time or budget.</p>
+                    </div>
+                    <div class="col-lg-4">
+                        <h3>How to read them</h3>
+                        <p>Start with the category guide, shortlist a few tools, then move into the compare view or detail pages with a narrower set and a better evaluation lens.</p>
                     </div>
                 </div>
             </div>
 
-            <div class="compare-table-wrap mt-4">
-                <table class="table align-middle">
-                    <tbody id="compareTable"></tbody>
-                </table>
-            </div>
+            <div id="categoryGuideGrid" class="row g-4 guide-grid"></div>
         </div>
     </section>
 

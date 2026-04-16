@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Premium AI Tools | AI Tools Hub</title>
+    <meta name="description" content="Search and browse premium AI tools across writing, coding, design, video, audio, marketing, research, productivity, automation, support, and app building.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Manrope:wght@400;500;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="page-shell">
+    <nav class="navbar navbar-expand-lg site-nav premium-nav">
+        <div class="container">
+            <a class="navbar-brand brand-mark" href="index.html">AI Tools Hub</a>
+            <div class="navbar-nav ms-auto flex-row gap-3">
+                <a class="nav-link" href="index.html#toolExplorer">Explore</a>
+                <a class="nav-link" href="free-tools.html">Free Tools</a>
+                <a class="nav-link" href="guides.html">Categories</a>
+                <a class="nav-link" href="methodology.html">Methodology</a>
+            </div>
+        </div>
+    </nav>
+
+    <section class="page-hero premium-section">
+        <div class="container">
+            <div class="premium-hero">
+                <div class="premium-copy">
+                    <span class="eyebrow">Premium AI Catalog</span>
+                    <h1>Search the paid side of the AI market</h1>
+                    <p>Use this page when you are comparing tools built for heavier production use, broader features, stronger team workflows, or more advanced output quality than the free starter tier usually offers.</p>
+                    <div class="hero-actions">
+                        <a href="#premiumExplorer" class="btn btn-accent rounded-pill">Browse Premium Tools</a>
+                        <a href="methodology.html" class="btn btn-ghost rounded-pill">Read Buying Method</a>
+                    </div>
+                </div>
+                <div class="premium-callout">
+                    <h2>What to expect from premium tools</h2>
+                    <p>Premium tools usually justify themselves with stronger controls, better team collaboration, more reliable output, deeper integrations, or higher throughput. The goal here is not to spend more. It is to spend only when the workflow gain is clear.</p>
+                    <ul class="editorial-list">
+                        <li>Search by tool name or workflow need.</li>
+                        <li>Filter by category before building a shortlist.</li>
+                        <li>Compare only similar tools, not unrelated categories.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="editorial-panel mt-4">
+                <div class="row g-4">
+                    <div class="col-lg-4">
+                        <h3>Who this page is for</h3>
+                        <p>Teams, freelancers, and buyers who already know the workflow they want to improve and are willing to pay if the tool saves enough time or raises quality enough to matter.</p>
+                    </div>
+                    <div class="col-lg-4">
+                        <h3>What to compare</h3>
+                        <p>Look at output quality, limits, controls, collaboration, integrations, and how much manual cleanup still remains after using the tool in a real task.</p>
+                    </div>
+                    <div class="col-lg-4">
+                        <h3>Design direction</h3>
+                        <p>This page is intentionally more product-catalog focused: tighter controls, higher contrast hierarchy, faster search, and pagination that supports decision-making without overwhelming the reader.</p>
+                    </div>
+                </div>
+            </div>
+
+            <section id="premiumExplorer" class="premium-explorer mt-4">
+                <div class="premium-controls">
+                    <div class="row g-3 align-items-end">
+                        <div class="col-lg-6">
+                            <label for="premiumSearch" class="form-label control-label">Search Premium Tools</label>
+                            <input id="premiumSearch" class="form-control form-control-lg site-input" placeholder="Search premium AI tools, writing, coding, design...">
+                        </div>
+                        <div class="col-lg-4">
+                            <label for="premiumCategoryFilter" class="form-label control-label">Category</label>
+                            <select id="premiumCategoryFilter" class="form-select form-select-lg site-input">
+                                <option value="">All Categories</option>
+                            </select>
+                        </div>
+                        <div class="col-lg-2">
+                            <button id="premiumClearFilters" class="btn btn-outline-light w-100 btn-lg rounded-pill">Reset</button>
+                        </div>
+                    </div>
+
+                    <div class="toolbar">
+                        <p id="premiumResultsSummary" class="results-summary">Loading premium tools...</p>
+                    </div>
+                </div>
+
+                <div id="premiumToolsGrid" class="row g-4"></div>
+                <div id="premiumPagination" class="pagination-wrap"></div>
+            </section>
+        </div>
+    </section>
+
+    <div id="siteFooter"></div>
+</div>
+
+<script src="data.js"></script>
+<script src="script.js"></script>
+</body>
+</html>
