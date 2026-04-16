@@ -1,6 +1,15 @@
 const canvas = document.getElementById("particles");
 
 if (canvas) {
+    canvas.remove();
+}
+
+/*
+The previous fixed canvas animation caused compositor flashes during fast scroll
+on some browsers, which could present as a white screen. The background is now
+handled entirely in CSS to keep scroll rendering stable.
+*/
+if (false && canvas) {
     const ctx = canvas.getContext("2d");
     const particles = [];
 
